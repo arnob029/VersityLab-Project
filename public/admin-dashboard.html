@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — TaskFlow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📋</div>
+            <div>
+                <div class="logo-title">TaskFlow</div>
+                <div class="logo-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Overview</div>
+            <a href="admin-dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span> Dashboard</a>
+            <div class="nav-section-label">Management</div>
+            <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
+            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> Task Management</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info-card">
+                <div class="user-avatar" id="sidebarAvatar">A</div>
+                <div class="user-meta">
+                    <div class="user-name" id="sidebarName">Admin</div>
+                    <div class="user-role"><span class="badge-role badge-admin">Admin</span></div>
+                </div>
+            </div>
+            <button class="nav-item" onclick="logout()" style="margin-top:8px; color:#ef4444;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>Dashboard Overview</h1>
+            <div class="top-bar-right">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+                <span id="welcomeText" style="font-size:14px; color:var(--text-secondary);">Welcome back!</span>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statUsers">—</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">📋</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statTasks">—</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statCompleted">—</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">⏳</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statPending">—</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">🔄</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statInProgress">—</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Tasks -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📋 Recent Tasks</h3>
+                    <a href="tasks.html" class="btn btn-primary btn-sm">View All Tasks</a>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Assigned To</th>
+                                <th>Status</th>
+                                <th>Deadline</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTasksBody">
+                            <tr><td colspan="5" style="text-align:center; padding:40px; color:var(--text-muted);">Loading tasks...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="js/admin-dashboard.js"></script>
+</body>
+</html>

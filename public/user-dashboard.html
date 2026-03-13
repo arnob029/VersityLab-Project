@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard — TaskFlow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📋</div>
+            <div>
+                <div class="logo-title">TaskFlow</div>
+                <div class="logo-subtitle">My Workspace</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Overview</div>
+            <a href="user-dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span> My Dashboard</a>
+            <div class="nav-section-label">Tasks</div>
+            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> My Tasks</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info-card">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-meta">
+                    <div class="user-name" id="sidebarName">User</div>
+                    <div class="user-role"><span class="badge-role badge-user">Employee</span></div>
+                </div>
+            </div>
+            <button class="nav-item" onclick="logout()" style="margin-top:8px; color:#ef4444;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>My Dashboard</h1>
+            <div class="top-bar-right">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+                <span id="welcomeText" style="font-size:14px; color:var(--text-secondary);">Welcome!</span>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">📋</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statAssigned">—</div>
+                        <div class="stat-label">Assigned Tasks</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statCompleted">—</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">⏳</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statPending">—</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🔄</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statInProgress">—</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Tasks -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📋 My Assigned Tasks</h3>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Deadline</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myTasksBody">
+                            <tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted);">Loading tasks...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="js/user-dashboard.js"></script>
+</body>
+</html>

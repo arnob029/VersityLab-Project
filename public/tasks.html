@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management — TaskFlow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📋</div>
+            <div>
+                <div class="logo-title">TaskFlow</div>
+                <div class="logo-subtitle" id="sidebarSubtitle">Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav" id="sidebarNav">
+            <!-- Filled by JS based on role -->
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info-card">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-meta">
+                    <div class="user-name" id="sidebarName">User</div>
+                    <div class="user-role" id="sidebarRoleBadge"></div>
+                </div>
+            </div>
+            <button class="nav-item" onclick="logout()" style="margin-top:8px; color:#ef4444;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1 id="pageTitle">Task Management</h1>
+            <div class="top-bar-right">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search tasks..." oninput="filterTasks()">
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode" style="margin-right: 8px;">🌙</button>
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()" id="addTaskBtn" style="display:none;">
+                    ➕ New Task
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!-- Filter Tabs -->
+            <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm filter-btn" onclick="filterByStatus('all')" id="filter-all">All</button>
+                <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('pending')" id="filter-pending">⏳ Pending</button>
+                <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('in_progress')" id="filter-in_progress">🔄 In Progress</button>
+                <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('completed')" id="filter-completed">✅ Completed</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>✅ Tasks</h3>
+                    <span id="taskCount" style="font-size:13px; color:var(--text-muted);"></span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Assigned To</th>
+                                <th>Status</th>
+                                <th>Deadline</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksTableBody">
+                            <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">Loading tasks...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Task Modal (Admin only) -->
+<div class="modal-overlay" id="taskModal">
+    <div class="modal" style="max-width:560px;">
+        <div class="modal-header">
+            <h4 id="taskModalTitle">Create New Task</h4>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="taskModalAlert" class="alert"></div>
+            <div class="form-group">
+                <label class="form-label">Task Title *</label>
+                <input type="text" id="taskTitle" class="form-control" placeholder="e.g. Create UI design">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea id="taskDescription" class="form-control" rows="3" placeholder="Describe the task..." style="resize:vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assign To</label>
+                <select id="taskAssignedUser" class="form-select">
+                    <option value="">— Unassigned —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select id="taskStatus" class="form-select">
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Deadline</label>
+                <input type="date" id="taskDeadline" class="form-control">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveTask()" id="saveTaskBtn">Create Task</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirm -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal" style="max-width:400px;">
+        <div class="modal-header">
+            <h4>Delete Task</h4>
+            <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="color:var(--text-secondary);">Are you sure you want to permanently delete this task and all its comments?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">Delete Task</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/tasks.js"></script>
+</body>
+</html>

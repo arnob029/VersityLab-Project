@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details — TaskFlow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📋</div>
+            <div>
+                <div class="logo-title">TaskFlow</div>
+                <div class="logo-subtitle" id="sidebarSubtitle">Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav" id="sidebarNav"></nav>
+        <div class="sidebar-footer">
+            <div class="user-info-card">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-meta">
+                    <div class="user-name" id="sidebarName">User</div>
+                    <div class="user-role" id="sidebarRoleBadge"></div>
+                </div>
+            </div>
+            <button class="nav-item" onclick="logout()" style="margin-top:8px; color:#ef4444;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button onclick="goBack()" class="btn btn-secondary btn-sm">← Back</button>
+                <h1 id="taskTitleHeader">Task Details</h1>
+            </div>
+            <div class="top-bar-right" id="adminActions" style="display: flex; align-items: center; gap: 8px;">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="task-detail-grid">
+                <!-- Left: Task Info + Comments -->
+                <div>
+                    <!-- Task Info Card -->
+                    <div class="card" style="margin-bottom:24px;">
+                        <div class="card-header">
+                            <h3>📄 Task Information</h3>
+                            <span id="taskStatusBadge" class="badge"></span>
+                        </div>
+                        <div class="card-body">
+                            <div id="taskInfoContent" style="color:var(--text-muted); text-align:center; padding:20px;">Loading task...</div>
+                        </div>
+                    </div>
+
+                    <!-- Comments -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>💬 Comments</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Add comment form -->
+                            <div id="commentForm" style="margin-bottom:24px;">
+                                <textarea id="commentInput" class="form-control" rows="3" placeholder="Write a comment..." style="resize:vertical; margin-bottom:10px;"></textarea>
+                                <button class="btn btn-primary btn-sm" onclick="addComment()" id="commentBtn">
+                                    Post Comment
+                                </button>
+                            </div>
+                            <div id="commentAlert" class="alert"></div>
+                            <div id="commentsList">
+                                <div style="text-align:center; padding:20px; color:var(--text-muted);">Loading comments...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Status Update Sidebar -->
+                <div>
+                    <!-- Update Status -->
+                    <div class="card" id="updateStatusCard" style="margin-bottom:20px;">
+                        <div class="card-header"><h3>🔄 Update Status</h3></div>
+                        <div class="card-body">
+                            <div id="statusAlert" class="alert"></div>
+                            <div class="form-group">
+                                <label class="form-label">Current Status</label>
+                                <select id="statusSelect" class="form-select">
+                                    <option value="pending">⏳ Pending</option>
+                                    <option value="in_progress">🔄 In Progress</option>
+                                    <option value="completed">✅ Completed</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-success btn-full" onclick="updateStatus()" id="statusBtn">
+                                Update Status
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Task Meta -->
+                    <div class="card">
+                        <div class="card-header"><h3>📊 Task Info</h3></div>
+                        <div class="card-body" id="taskMetaPanel" style="font-size:14px; color:var(--text-secondary);">
+                            Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/task-detail.js"></script>
+</body>
+</html>

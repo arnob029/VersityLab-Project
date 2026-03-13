@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management — TaskFlow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📋</div>
+            <div>
+                <div class="logo-title">TaskFlow</div>
+                <div class="logo-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Overview</div>
+            <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <div class="nav-section-label">Management</div>
+            <a href="users.html" class="nav-item active"><span class="nav-icon">👥</span> User Management</a>
+            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> Task Management</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info-card">
+                <div class="user-avatar" id="sidebarAvatar">A</div>
+                <div class="user-meta">
+                    <div class="user-name" id="sidebarName">Admin</div>
+                    <div class="user-role"><span class="badge-role badge-admin">Admin</span></div>
+                </div>
+            </div>
+            <button class="nav-item" onclick="logout()" style="margin-top:8px; color:#ef4444;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>User Management</h1>
+            <div class="top-bar-right">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode" style="margin-right: 8px;">🌙</button>
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()" id="addUserBtn">
+                    ➕ Add User
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3>👥 All Users</h3>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search users..." oninput="filterUsers()">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h4 id="modalTitle">Add New User</h4>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="modalAlert" class="alert"></div>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="userName" class="form-control" placeholder="Full name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="userEmail" class="form-control" placeholder="email@example.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password <span id="pwdNote" style="color:var(--text-muted); font-weight:400; text-transform:none;">(leave blank to keep current)</span></label>
+                <input type="password" id="userPassword" class="form-control" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Role</label>
+                <select id="userRole" class="form-select">
+                    <option value="user">User / Employee</option>
+                    <option value="admin">Admin / Manager</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveUser()" id="saveUserBtn">Save User</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal" style="max-width:400px;">
+        <div class="modal-header">
+            <h4>Delete User</h4>
+            <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="color:var(--text-secondary);">Are you sure you want to delete <strong id="deleteUserName" style="color:var(--text-primary);"></strong>? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/users.js"></script>
+</body>
+</html>
