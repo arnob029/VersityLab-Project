@@ -1,3 +1,8 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../config/db');
+const { isAuthenticated, isAdmin } = require('../middleware/auth');
+
 // POST /api/comments — Add comment to a task (supports replies)
 router.post('/', isAuthenticated, async (req, res) => {
     try {
