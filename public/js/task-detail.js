@@ -43,7 +43,7 @@ function buildSidebar(role) {
 function getStatusBadge(status) {
     const map = {
         pending: '<span class="badge badge-pending">⏳ Pending</span>',
-        in_progress: '<span class="badge badge-in_progress">🔄 In Progress</span>',
+        ongoing: '<span class="badge badge-ongoing">🔄 Ongoing</span>',
         completed: '<span class="badge badge-completed">✅ Completed</span>'
     };
     return map[status] || status;
@@ -285,6 +285,22 @@ async function react(commentId, reaction) {
         const data = await res.json();
         if (data.success) {
             await loadComments();
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function deleteComment(commentId) {
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+    try {
+        const res = await fetch(`/api/comments/${commentId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await res.json();
+        if (data.success) {
+            await loadComments();
+        } else {
+            alert(data.message);
         }
     } catch (e) { console.error(e); }
 }

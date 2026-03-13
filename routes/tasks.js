@@ -163,14 +163,14 @@ router.get('/stats/summary', isAuthenticated, async (req, res) => {
             const [totalTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks');
             const [completedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "completed"');
             const [pendingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "pending"');
-            const [inProgressTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "in_progress"');
+            const [ongoingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "ongoing"');
 
             const stats = {
                 totalUsers: totalUsersRows[0].count,
                 totalTasks: totalTasksRows[0].count,
                 completedTasks: completedTasksRows[0].count,
                 pendingTasks: pendingTasksRows[0].count,
-                inProgressTasks: inProgressTasksRows[0].count
+                ongoingTasks: ongoingTasksRows[0].count
             };
 
             console.log('[Stats] Admin stats calculated:', stats);
@@ -179,13 +179,13 @@ router.get('/stats/summary', isAuthenticated, async (req, res) => {
             const [assignedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ?', [user.id]);
             const [completedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "completed"', [user.id]);
             const [pendingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "pending"', [user.id]);
-            const [inProgressTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "in_progress"', [user.id]);
+            const [ongoingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "ongoing"', [user.id]);
 
             const stats = {
                 assignedTasks: assignedTasksRows[0].count,
                 completedTasks: completedTasksRows[0].count,
                 pendingTasks: pendingTasksRows[0].count,
-                inProgressTasks: inProgressTasksRows[0].count
+                ongoingTasks: ongoingTasksRows[0].count
             };
 
             console.log(`[Stats] User stats for ${user.name}:`, stats);

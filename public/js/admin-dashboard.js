@@ -10,7 +10,7 @@ async function logout() {
 function getStatusBadge(status) {
     const map = {
         pending: '<span class="badge badge-pending">⏳ Pending</span>',
-        in_progress: '<span class="badge badge-in_progress">🔄 In Progress</span>',
+        ongoing: '<span class="badge badge-ongoing">🔄 Ongoing</span>',
         completed: '<span class="badge badge-completed">✅ Completed</span>'
     };
     return map[status] || status;
@@ -57,7 +57,7 @@ async function init() {
             document.getElementById('statTasks').textContent = data.stats.totalTasks;
             document.getElementById('statCompleted').textContent = data.stats.completedTasks;
             document.getElementById('statPending').textContent = data.stats.pendingTasks;
-            document.getElementById('statInProgress').textContent = data.stats.inProgressTasks;
+            document.getElementById('statInProgress').textContent = data.stats.ongoingTasks;
         } else {
             console.error('[Stats] API error:', data.message);
         }
