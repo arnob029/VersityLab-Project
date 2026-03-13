@@ -49,6 +49,10 @@ function buildSidebar(role) {
         document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-admin">Admin</span>';
         document.getElementById('addTaskBtn').style.display = 'flex';
         document.getElementById('pageTitle').textContent = 'Task Management';
+        
+        // Hide status selection for admins (as users update status)
+        const statusGroup = document.getElementById('taskStatusGroup');
+        if (statusGroup) statusGroup.style.display = 'none';
     } else {
         nav.innerHTML = `
             <div class="nav-section-label">Overview</div>

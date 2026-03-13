@@ -7,7 +7,9 @@ async function updateAdmin() {
         host: process.env.DB_HOST || 'localhost',
         user: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD || '',
-        database: 'task_management'
+        port: process.env.DB_PORT || 27176,
+        database: process.env.DB_NAME || 'task_management',
+        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : null
     });
 
     try {
@@ -20,7 +22,7 @@ async function updateAdmin() {
         
         if (rows.length > 0) {
             // User exists, just update role and password
-            await conn.query('UPDATE users SET role = "admin", password = ? WHERE email = ?', [hash, 'arnob0653@gmail.com']);
+            await conn.query('UPDATE users SET role = \'admin\', password = ? WHERE email = ?', [hash, 'arnob0653@gmail.com']);
             console.log('✅ User arnob0653@gmail.com updated to admin');
         } else {
             // User doesn't exist, create missing admin
@@ -32,7 +34,7 @@ async function updateAdmin() {
         }
 
         // Delete the old admin
-        await conn.query('DELETE FROM users WHERE email = "admin@taskmanager.com"');
+        await conn.query('DELETE FROM users WHERE email = \'admin@taskmanager.com\'');
         console.log('🗑️ Deleted old default admin (admin@taskmanager.com)');
 
     } catch (e) {

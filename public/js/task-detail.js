@@ -125,13 +125,13 @@ function renderTaskInfo(task) {
         document.getElementById('adminActions').innerHTML = `
             <a href="tasks.html" class="btn btn-secondary btn-sm">← All Tasks</a>
         `;
-        // Hide update status card for admin
+        // Hide update status card for admin (users will update status)
         const updateStatusCard = document.getElementById('updateStatusCard');
         if (updateStatusCard) updateStatusCard.style.display = 'none';
 
-        // Hide comment input form for admin
-        const commentForm = document.getElementById('commentForm');
-        if (commentForm) commentForm.style.display = 'none';
+        // Admins CAN comment now, so we don't hide the comment form anymore
+        // const commentForm = document.getElementById('commentForm');
+        // if (commentForm) commentForm.style.display = 'none';
     }
 }
 
