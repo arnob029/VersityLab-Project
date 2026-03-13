@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function checkAuth() {
     try {
-        const res = await fetch('/api/auth/me');
+        console.log('[Auth] Checking session...');
+        const res = await fetch('/api/me');
         const data = await res.json();
+        console.log('[Auth] Session data:', data);
         if (data.success) {
             currentUser = data.user;
             updateSidebarNav(data.user);
@@ -24,11 +26,15 @@ async function checkAuth() {
                 : '<span class="badge-role badge-user">User</span>';
             document.getElementById('roleSubtitle').textContent = data.user.role === 'admin' ? 'Admin Panel' : 'User Panel';
 
+            // Fill profile data once we have user
+            loadProfileData();
         } else {
-            window.location.href = 'login.html';
+            console.warn('[Auth] Not authenticated, redirecting to index.html');
+            window.location.href = 'index.html';
         }
     } catch (e) {
-        window.location.href = 'login.html';
+        console.error('[Auth] Error:', e);
+        window.location.href = 'index.html';
     }
 }
 
@@ -57,16 +63,45 @@ function updateSidebarNav(user) {
 }
 
 function loadProfileData() {
+    console.log('[Profile] Loading data for:', currentUser);
     if (currentUser) {
-        document.getElementById('profileName').value = currentUser.name;
-        document.getElementById('profileEmail').value = currentUser.email;
+        const nameInput = document.getElementById('profileName');
+        const emailInput = document.getElementById('profileEmail');
+        if (nameInput) nameInput.value = currentUser.name || '';
+        if (emailInput) emailInput.value = currentUser.email || '';
     }
+}
+
+function enableEdit(fieldId) {
+    const input = document.getElementById(fieldId);
+    input.removeAttribute('readonly');
+    input.focus();
+    input.parentElement.classList.add('editing-active');
+    
+    document.getElementById('saveProfileBtn').style.display = 'inline-block';
+    document.getElementById('cancelEditBtn').style.display = 'inline-block';
+}
+
+function cancelEdit() {
+    loadProfileData(); // Reset values
+    const fields = ['profileName', 'profileEmail'];
+    fields.forEach(id => {
+        const input = document.getElementById(id);
+        input.setAttribute('readonly', true);
+        input.parentElement.classList.remove('editing-active');
+    });
+
+    document.getElementById('saveProfileBtn').style.display = 'none';
+    document.getElementById('cancelEditBtn').style.display = 'none';
 }
 
 function switchSection(section) {
     // Update nav items
     document.querySelectorAll('.settings-nav-item').forEach(item => item.classList.remove('active'));
-    event.target.classList.add('active');
+    // Handle synthetic event or click
+    if (window.event && window.event.target) {
+        window.event.target.classList.add('active');
+    }
 
     // Update sections
     document.querySelectorAll('.settings-section').forEach(sec => sec.classList.remove('active'));
@@ -79,10 +114,16 @@ function switchSection(section) {
 
 async function handleProfileUpdate(e) {
     e.preventDefault();
-    const name = document.getElementById('profileName').value;
-    const email = document.getElementById('profileEmail').value;
+    const name = document.getElementById('profileName').value.trim();
+    const email = document.getElementById('profileEmail').value.trim();
     const alert = document.getElementById('profileAlert');
     const btn = document.getElementById('saveProfileBtn');
+
+    if (!name || !email) {
+        alert.className = 'alert alert-danger show';
+        alert.innerHTML = '❌ Name and email cannot be empty.';
+        return;
+    }
 
     btn.disabled = true;
     btn.textContent = 'Saving...';
@@ -99,6 +140,9 @@ async function handleProfileUpdate(e) {
             alert.className = 'alert alert-success show';
             alert.innerHTML = '✅ Profile updated successfully.';
             document.getElementById('sidebarName').textContent = name;
+            currentUser.name = name;
+            currentUser.email = email;
+            cancelEdit(); // Lock fields again
         } else {
             alert.className = 'alert alert-danger show';
             alert.innerHTML = `❌ ${data.message}`;

@@ -49,6 +49,49 @@
         .settings-section.active {
             display: block;
         }
+        .edit-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .edit-group:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .edit-group input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0;
+            font-size: 15px;
+            color: var(--text-primary);
+            outline: none;
+        }
+        .edit-group input[readonly] {
+            cursor: default;
+        }
+        .edit-btn {
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        .edit-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+        #saveProfileBtn, #cancelEditBtn {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -105,14 +148,23 @@
                             <form id="profileForm">
                                 <div class="form-group">
                                     <label class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="profileName" required>
+                                    <div class="edit-group">
+                                        <input type="text" id="profileName" readonly required>
+                                        <div class="edit-btn" onclick="enableEdit('profileName')">✏️ Edit</div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="profileEmail" required>
+                                    <div class="edit-group">
+                                        <input type="email" id="profileEmail" readonly required>
+                                        <div class="edit-btn" onclick="enableEdit('profileEmail')">✏️ Edit</div>
+                                    </div>
                                 </div>
                                 <div id="profileAlert" class="alert"></div>
-                                <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                                <div style="display:flex; gap:12px; margin-top:24px;">
+                                    <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                                    <button type="button" class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEdit()">Cancel</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -148,7 +200,7 @@
         </div>
     </main>
 </div>
-<script src="js/profile.js?v=1.1"></script>
+<script src="js/profile.js?v=1.2.3"></script>
 <script src="js/auth.js"></script> <!-- for logout -->
 </body>
 </html>
