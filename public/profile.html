@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings — TaskFlow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/theme.js"></script>
+    <style>
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .settings-nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+        .settings-nav-item {
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 15px;
+            padding: 5px 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .settings-nav-item:hover {
+            color: var(--text-primary);
+        }
+        .settings-nav-item.active {
+            color: var(--primary-light);
+        }
+        .settings-nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+        .settings-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .settings-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">📋</div>
+            <div>
+                <div class="logo-title">TaskFlow</div>
+                <div class="logo-subtitle" id="roleSubtitle">User Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav" id="sidebarNav">
+            <!-- Dynamically populated -->
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info-card">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-meta">
+                    <div class="user-name" id="sidebarName">User</div>
+                    <div class="user-role" id="sidebarRole"><span class="badge-role badge-user">User</span></div>
+                </div>
+            </div>
+            <button class="nav-item" onclick="logout()" style="margin-top:8px; color:#ef4444;">
+                <span class="nav-icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>Account Settings</h1>
+            <div class="top-bar-right">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="settings-container">
+                <div class="settings-nav">
+                    <div class="settings-nav-item active" onclick="switchSection('profile')">Profile Info</div>
+                    <div class="settings-nav-item" onclick="switchSection('security')">Password & Security</div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profileSection" class="settings-section active">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>👤 Public Profile</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="profileName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="profileEmail" required>
+                                </div>
+                                <div id="profileAlert" class="alert"></div>
+                                <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div id="securitySection" class="settings-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>🔒 Change Password</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="passwordForm">
+                                <div class="form-group">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirmNewPassword" required minlength="6">
+                                </div>
+                                <div id="passwordAlert" class="alert"></div>
+                                <button type="submit" class="btn btn-primary" id="savePasswordBtn">Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="js/profile.js"></script>
+<script src="js/auth.js"></script> <!-- for logout -->
+</body>
+</html>

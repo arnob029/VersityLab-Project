@@ -29,12 +29,27 @@ async function init() {
         const user = data.user;
         document.getElementById('sidebarName').textContent = user.name;
         document.getElementById('sidebarAvatar').textContent = user.name.charAt(0).toUpperCase();
+        buildSidebar();
     } catch (e) {
         window.location.href = 'index.html';
         return;
     }
 
     loadUsers();
+}
+
+function buildSidebar() {
+    const nav = document.getElementById('sidebarNav');
+    nav.innerHTML = `
+        <div class="nav-section-label">Overview</div>
+        <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+        <div class="nav-section-label">Management</div>
+        <a href="users.html" class="nav-item active"><span class="nav-icon">👥</span> User Management</a>
+        <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> Task Management</a>
+        <div class="nav-section-label">Settings</div>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+    `;
+    document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-admin">Admin</span>';
 }
 
 async function loadUsers() {

@@ -101,4 +101,25 @@ router.post('/:id/react', isAuthenticated, async (req, res) => {
     }
 });
 
+// DELETE /api/comments/:id — Admin: Delete comment
+router.delete('/:id', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Check if comment exists
+        const [existing] = await db.query('SELECT id FROM comments WHERE id = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({ success: false, message: 'Comment not found.' });
+        }
+
+        // Delete the comment (cascade will handle reactions and nested replies)
+        await db.query('DELETE FROM comments WHERE id = ?', [id]);
+        
+        res.json({ success: true, message: 'Comment deleted successfully.' });
+    } catch (error) {
+        console.error('Delete comment error:', error);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
 module.exports = router;

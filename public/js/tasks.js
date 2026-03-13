@@ -45,6 +45,8 @@ function buildSidebar(role) {
             <div class="nav-section-label">Management</div>
             <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
             <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> Task Management</a>
+            <div class="nav-section-label">Settings</div>
+            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
         `;
         document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-admin">Admin</span>';
         document.getElementById('addTaskBtn').style.display = 'flex';
@@ -56,11 +58,13 @@ function buildSidebar(role) {
     } else {
         nav.innerHTML = `
             <div class="nav-section-label">Overview</div>
-            <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> My Dashboard</a>
-            <div class="nav-section-label">Tasks</div>
+            <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <div class="nav-section-label">Work</div>
             <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> My Tasks</a>
+            <div class="nav-section-label">Settings</div>
+            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
         `;
-        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-user">Employee</span>';
+        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-user">User</span>';
         document.getElementById('addTaskBtn').style.display = 'none';
         document.getElementById('pageTitle').textContent = 'My Tasks';
     }

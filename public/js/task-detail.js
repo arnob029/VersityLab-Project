@@ -22,17 +22,21 @@ function buildSidebar(role) {
             <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
             <div class="nav-section-label">Management</div>
             <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
-            <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> Task Management</a>
+            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> Task Management</a>
+            <div class="nav-section-label">Settings</div>
+            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
         `;
         document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-admin">Admin</span>';
     } else {
         nav.innerHTML = `
             <div class="nav-section-label">Overview</div>
-            <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> My Dashboard</a>
-            <div class="nav-section-label">Tasks</div>
-            <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> My Tasks</a>
+            <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <div class="nav-section-label">Work</div>
+            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> My Tasks</a>
+            <div class="nav-section-label">Settings</div>
+            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
         `;
-        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-user">Employee</span>';
+        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-user">User</span>';
     }
 }
 
@@ -220,6 +224,7 @@ function renderCommentHTML(c, allReplies) {
                         <button class="reaction-btn ${c.my_reaction === '😆' ? 'active' : ''}" onclick="react(${c.id}, '😆')">😆 <span>${c.laugh_count || 0}</span></button>
                     </div>
                     <button class="btn-text" onclick="toggleReply(${c.id})">Reply</button>
+                    ${currentUser.role === 'admin' ? `<button class="btn-text" style="color:var(--danger); margin-left:10px;" onclick="deleteComment(${c.id})">Delete</button>` : ''}
                 </div>
                 
                 <div id="reply-form-${c.id}" class="reply-form" style="display:none; margin-top:10px;">
