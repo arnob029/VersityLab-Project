@@ -84,11 +84,13 @@ function enableEdit(fieldId) {
 
 function cancelEdit() {
     loadProfileData(); // Reset values
-    const fields = ['profileName', 'profileEmail'];
+    const fields = ['profileName']; // Email is now read-only
     fields.forEach(id => {
         const input = document.getElementById(id);
-        input.setAttribute('readonly', true);
-        input.parentElement.classList.remove('editing-active');
+        if (input) {
+            input.setAttribute('readonly', true);
+            input.parentElement.classList.remove('editing-active');
+        }
     });
 
     document.getElementById('saveProfileBtn').style.display = 'none';
@@ -115,13 +117,12 @@ function switchSection(section) {
 async function handleProfileUpdate(e) {
     e.preventDefault();
     const name = document.getElementById('profileName').value.trim();
-    const email = document.getElementById('profileEmail').value.trim();
     const alert = document.getElementById('profileAlert');
     const btn = document.getElementById('saveProfileBtn');
 
-    if (!name || !email) {
+    if (!name) {
         alert.className = 'alert alert-danger show';
-        alert.innerHTML = '❌ Name and email cannot be empty.';
+        alert.innerHTML = '❌ Name cannot be empty.';
         return;
     }
 
@@ -132,7 +133,7 @@ async function handleProfileUpdate(e) {
         const res = await fetch('/api/users/profile', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email })
+            body: JSON.stringify({ name })
         });
         const data = await res.json();
 
@@ -141,7 +142,6 @@ async function handleProfileUpdate(e) {
             alert.innerHTML = '✅ Profile updated successfully.';
             document.getElementById('sidebarName').textContent = name;
             currentUser.name = name;
-            currentUser.email = email;
             cancelEdit(); // Lock fields again
         } else {
             alert.className = 'alert alert-danger show';
@@ -165,6 +165,12 @@ async function handlePasswordUpdate(e) {
     const alert = document.getElementById('passwordAlert');
     const btn = document.getElementById('savePasswordBtn');
 
+    if (newPassword === currentPassword) {
+        alert.className = 'alert alert-danger show';
+        alert.innerHTML = '❌ New password cannot be the same as current password.';
+        return;
+    }
+
     if (newPassword !== confirmNewPassword) {
         alert.className = 'alert alert-danger show';
         alert.innerHTML = '❌ New passwords do not match.';
@@ -184,7 +190,7 @@ async function handlePasswordUpdate(e) {
 
         if (data.success) {
             alert.className = 'alert alert-success show';
-            alert.innerHTML = '✅ Password updated successfully.';
+            alert.innerHTML = '✅ Password updated successfully!';
             document.getElementById('passwordForm').reset();
         } else {
             alert.className = 'alert alert-danger show';

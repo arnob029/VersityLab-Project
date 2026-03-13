@@ -154,10 +154,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Email Address</label>
-                                    <div class="edit-group">
-                                        <input type="email" id="profileEmail" readonly required>
-                                        <div class="edit-btn" onclick="enableEdit('profileEmail')">✏️ Edit</div>
+                                    <label class="form-label">Email Address (Read-only)</label>
+                                    <div class="edit-group" style="background:var(--card-border); opacity:0.8;">
+                                        <input type="email" id="profileEmail" readonly>
                                     </div>
                                 </div>
                                 <div id="profileAlert" class="alert"></div>
@@ -200,7 +199,7 @@
         </div>
     </main>
 </div>
-<script src="js/profile.js?v=1.2.3"></script>
+<script src="js/profile.js?v=1.2.4"></script>
 <script src="js/auth.js"></script> <!-- for logout -->
 </body>
 </html>

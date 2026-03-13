@@ -46,6 +46,65 @@ router.post('/', isAuthenticated, isAdmin, async (req, res) => {
     }
 });
 
+// PUT /api/users/profile — Update current user profile
+router.put('/profile', isAuthenticated, async (req, res) => {
+    try {
+        const { name } = req.body;
+        const userId = req.session.user.id;
+
+        if (!name) {
+            return res.status(400).json({ success: false, message: 'Name is required.' });
+        }
+
+        await db.query('UPDATE users SET name = ? WHERE id = ?', [name, userId]);
+
+        // Update session
+        req.session.user.name = name;
+
+        res.json({ success: true, message: 'Profile updated successfully.' });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
+// PUT /api/users/change-password — Update current user password
+router.put('/change-password', isAuthenticated, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.session.user.id;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: 'Current and new passwords are required.' });
+        }
+
+        // Get user's current hashed password
+        const [users] = await db.query('SELECT password FROM users WHERE id = ?', [userId]);
+        const user = users[0];
+
+        // 1. Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: 'Current password is incorrect.' });
+        }
+
+        // 2. Prevent changing to the same password
+        const isSameAsOld = await bcrypt.compare(newPassword, user.password);
+        if (isSameAsOld) {
+            return res.status(400).json({ success: false, message: 'New password cannot be the same as your current password.' });
+        }
+
+        // 3. Hash new password and update
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+
+        res.json({ success: true, message: 'Password changed successfully.' });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
 // PUT /api/users/:id — Admin: update user
 router.put('/:id', isAuthenticated, isAdmin, async (req, res) => {
     try {
@@ -95,66 +154,6 @@ router.delete('/:id', isAuthenticated, isAdmin, async (req, res) => {
         res.json({ success: true, message: 'User deleted successfully.' });
     } catch (error) {
         console.error('Delete user error:', error);
-        res.status(500).json({ success: false, message: 'Server error.' });
-    }
-});
-
-// PUT /api/users/profile — Update current user profile
-router.put('/profile', isAuthenticated, async (req, res) => {
-    try {
-        const { name, email } = req.body;
-        const userId = req.session.user.id;
-
-        if (!name || !email) {
-            return res.status(400).json({ success: false, message: 'Name and email are required.' });
-        }
-
-        // Check if email is already taken by someone else
-        const [existing] = await db.query('SELECT id FROM users WHERE email = ? AND id != ?', [email, userId]);
-        if (existing.length > 0) {
-            return res.status(400).json({ success: false, message: 'Email already exists.' });
-        }
-
-        await db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, userId]);
-
-        // Update session
-        req.session.user.name = name;
-        req.session.user.email = email;
-
-        res.json({ success: true, message: 'Profile updated successfully.' });
-    } catch (error) {
-        console.error('Update profile error:', error);
-        res.status(500).json({ success: false, message: 'Server error.' });
-    }
-});
-
-// PUT /api/users/change-password — Update current user password
-router.put('/change-password', isAuthenticated, async (req, res) => {
-    try {
-        const { currentPassword, newPassword } = req.body;
-        const userId = req.session.user.id;
-
-        if (!currentPassword || !newPassword) {
-            return res.status(400).json({ success: false, message: 'Current and new passwords are required.' });
-        }
-
-        // Get user's current hashed password
-        const [users] = await db.query('SELECT password FROM users WHERE id = ?', [userId]);
-        const user = users[0];
-
-        // Verify current password
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ success: false, message: 'Current password is incorrect.' });
-        }
-
-        // Hash new password and update
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        await db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
-
-        res.json({ success: true, message: 'Password changed successfully.' });
-    } catch (error) {
-        console.error('Change password error:', error);
         res.status(500).json({ success: false, message: 'Server error.' });
     }
 });
