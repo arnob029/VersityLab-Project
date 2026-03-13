@@ -156,43 +156,44 @@ router.delete('/:id', isAuthenticated, isAdmin, async (req, res) => {
 router.get('/stats/summary', isAuthenticated, async (req, res) => {
     try {
         const user = req.session.user;
+        console.log(`[Stats] Fetching summary for user: ${user.email} (Role: ${user.role})`);
 
         if (user.role === 'admin') {
-            const [[totalUsers]] = await db.query('SELECT COUNT(*) as count FROM users WHERE role = "user"');
-            const [[totalTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks');
-            const [[completedTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "completed"');
-            const [[pendingTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "pending"');
-            const [[inProgressTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "in_progress"');
+            const [totalUsersRows] = await db.query('SELECT COUNT(*) as count FROM users WHERE role = "user"');
+            const [totalTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks');
+            const [completedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "completed"');
+            const [pendingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "pending"');
+            const [inProgressTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "in_progress"');
 
-            res.json({
-                success: true,
-                stats: {
-                    totalUsers: totalUsers.count,
-                    totalTasks: totalTasks.count,
-                    completedTasks: completedTasks.count,
-                    pendingTasks: pendingTasks.count,
-                    inProgressTasks: inProgressTasks.count
-                }
-            });
+            const stats = {
+                totalUsers: totalUsersRows[0].count,
+                totalTasks: totalTasksRows[0].count,
+                completedTasks: completedTasksRows[0].count,
+                pendingTasks: pendingTasksRows[0].count,
+                inProgressTasks: inProgressTasksRows[0].count
+            };
+
+            console.log('[Stats] Admin stats calculated:', stats);
+            res.json({ success: true, stats });
         } else {
-            const [[assignedTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ?', [user.id]);
-            const [[completedTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "completed"', [user.id]);
-            const [[pendingTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "pending"', [user.id]);
-            const [[inProgressTasks]] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "in_progress"', [user.id]);
+            const [assignedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ?', [user.id]);
+            const [completedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "completed"', [user.id]);
+            const [pendingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "pending"', [user.id]);
+            const [inProgressTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "in_progress"', [user.id]);
 
-            res.json({
-                success: true,
-                stats: {
-                    assignedTasks: assignedTasks.count,
-                    completedTasks: completedTasks.count,
-                    pendingTasks: pendingTasks.count,
-                    inProgressTasks: inProgressTasks.count
-                }
-            });
+            const stats = {
+                assignedTasks: assignedTasksRows[0].count,
+                completedTasks: completedTasksRows[0].count,
+                pendingTasks: pendingTasksRows[0].count,
+                inProgressTasks: inProgressTasksRows[0].count
+            };
+
+            console.log(`[Stats] User stats for ${user.name}:`, stats);
+            res.json({ success: true, stats });
         }
     } catch (error) {
-        console.error('Stats error:', error);
-        res.status(500).json({ success: false, message: 'Server error.' });
+        console.error('[Stats Error]:', error);
+        res.status(500).json({ success: false, message: 'Server error fetching stats.' });
     }
 });
 

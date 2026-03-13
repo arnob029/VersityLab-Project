@@ -842,3 +842,74 @@ tbody td {
     .auth-card { padding: 32px 24px; }
     .search-box input { width: 160px; }
 }
+
+/* ---- Reactions & Replies ---- */
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.reactions {
+    display: flex;
+    gap: 6px;
+}
+
+.reaction-btn {
+    background: var(--hover-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-btn:hover {
+    background: var(--card-border);
+    color: var(--text-primary);
+}
+
+.reaction-btn.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--primary-light);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+.replies-container {
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 2px solid var(--card-border);
+    margin-top: 10px;
+}
+
+.reply-form {
+    background: var(--hover-bg);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--card-border);
+}
+
+.replies-container .comment-item {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(51,65,85,0.3);
+}

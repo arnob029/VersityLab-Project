@@ -172,6 +172,8 @@ async function updateStatus() {
     btn.textContent = 'Update Status';
 }
 
+let replyingToId = null;
+
 async function loadComments() {
     try {
         const res = await fetch(`/api/comments/${taskId}`, { credentials: 'include' });
@@ -179,18 +181,12 @@ async function loadComments() {
         const container = document.getElementById('commentsList');
 
         if (data.success && data.comments.length > 0) {
-            container.innerHTML = data.comments.map(c => `
-                <div class="comment-item">
-                    <div class="comment-avatar">${c.user_name.charAt(0).toUpperCase()}</div>
-                    <div class="comment-content">
-                        <div class="comment-meta">
-                            <span class="comment-author">${c.user_name}</span>
-                            <span class="comment-time">${new Date(c.created_at).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</span>
-                        </div>
-                        <div class="comment-text">${c.comment}</div>
-                    </div>
-                </div>
-            `).join('');
+            const comments = data.comments;
+            // Separate top-level comments and replies
+            const parents = comments.filter(c => !c.parent_id);
+            const replies = comments.filter(c => c.parent_id);
+
+            container.innerHTML = parents.map(c => renderCommentHTML(c, replies)).join('');
         } else {
             container.innerHTML = `<div class="empty-state" style="padding:30px 0;">
                 <div class="empty-icon">💬</div>
@@ -199,8 +195,93 @@ async function loadComments() {
             </div>`;
         }
     } catch (e) {
+        console.error('Load comments error:', e);
         document.getElementById('commentsList').innerHTML = '<p style="color:var(--danger); text-align:center;">Failed to load comments.</p>';
     }
+}
+
+function renderCommentHTML(c, allReplies) {
+    const commentReplies = allReplies.filter(r => r.parent_id === c.id);
+    
+    return `
+        <div class="comment-item" id="comment-${c.id}">
+            <div class="comment-avatar">${c.user_name.charAt(0).toUpperCase()}</div>
+            <div class="comment-content">
+                <div class="comment-meta">
+                    <span class="comment-author">${c.user_name}</span>
+                    <span class="comment-time">${new Date(c.created_at).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</span>
+                </div>
+                <div class="comment-text">${c.comment}</div>
+                
+                <div class="comment-actions">
+                    <div class="reactions">
+                        <button class="reaction-btn ${c.my_reaction === '👍' ? 'active' : ''}" onclick="react(${c.id}, '👍')">👍 <span>${c.like_count || 0}</span></button>
+                        <button class="reaction-btn ${c.my_reaction === '❤️' ? 'active' : ''}" onclick="react(${c.id}, '❤️')">❤️ <span>${c.heart_count || 0}</span></button>
+                        <button class="reaction-btn ${c.my_reaction === '😆' ? 'active' : ''}" onclick="react(${c.id}, '😆')">😆 <span>${c.laugh_count || 0}</span></button>
+                    </div>
+                    <button class="btn-text" onclick="toggleReply(${c.id})">Reply</button>
+                </div>
+                
+                <div id="reply-form-${c.id}" class="reply-form" style="display:none; margin-top:10px;">
+                    <textarea class="form-control" id="reply-input-${c.id}" rows="2" placeholder="Write a reply..."></textarea>
+                    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                        <button class="btn btn-sm btn-secondary" onclick="toggleReply(${c.id})">Cancel</button>
+                        <button class="btn btn-sm btn-primary" onclick="postReply(${c.id})">Post Reply</button>
+                    </div>
+                </div>
+
+                ${commentReplies.length > 0 ? `
+                    <div class="replies-container">
+                        ${commentReplies.map(r => renderCommentHTML(r, allReplies)).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function toggleReply(id) {
+    const form = document.getElementById(`reply-form-${id}`);
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    if (form.style.display === 'block') {
+        document.getElementById(`reply-input-${id}`).focus();
+    }
+}
+
+async function postReply(parentId) {
+    const input = document.getElementById(`reply-input-${parentId}`);
+    const comment = input.value.trim();
+    if (!comment) return;
+
+    try {
+        const res = await fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ task_id: taskId, comment, parent_id: parentId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            await loadComments();
+        } else {
+            alert(data.message);
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function react(commentId, reaction) {
+    try {
+        const res = await fetch(`/api/comments/${commentId}/react`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ reaction })
+        });
+        const data = await res.json();
+        if (data.success) {
+            await loadComments();
+        }
+    } catch (e) { console.error(e); }
 }
 
 async function addComment() {
@@ -223,7 +304,7 @@ async function addComment() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ task_id: taskId, comment })
+            body: JSON.stringify({ task_id: taskId, comment, parent_id: null })
         });
         const data = await res.json();
 

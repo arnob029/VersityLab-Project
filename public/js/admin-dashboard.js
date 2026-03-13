@@ -48,16 +48,22 @@ async function init() {
 
     // Load stats
     try {
+        console.log('[Stats] Requesting summary counts...');
         const res = await fetch('/api/tasks/stats/summary', { credentials: 'include' });
         const data = await res.json();
+        console.log('[Stats] Received data:', data);
         if (data.success) {
             document.getElementById('statUsers').textContent = data.stats.totalUsers;
             document.getElementById('statTasks').textContent = data.stats.totalTasks;
             document.getElementById('statCompleted').textContent = data.stats.completedTasks;
             document.getElementById('statPending').textContent = data.stats.pendingTasks;
             document.getElementById('statInProgress').textContent = data.stats.inProgressTasks;
+        } else {
+            console.error('[Stats] API error:', data.message);
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error('[Stats] Network/Parsing error:', e);
+    }
 
     // Load recent tasks (max 5)
     try {
