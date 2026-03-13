@@ -9,7 +9,8 @@ async function setup() {
         user: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD || '',
         port: process.env.DB_PORT || 3306,
-        multipleStatements: true
+        multipleStatements: true,
+        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : null
     }).promise();
 
     try {
