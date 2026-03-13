@@ -7,8 +7,13 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const VERSION = '1.2.0';
 
 // Middleware
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
+});
 app.use(cors({
     origin: true,
     credentials: true

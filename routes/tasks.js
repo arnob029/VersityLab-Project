@@ -159,11 +159,11 @@ router.get('/stats/summary', isAuthenticated, async (req, res) => {
         console.log(`[Stats] Fetching summary for user: ${user.email} (Role: ${user.role})`);
 
         if (user.role === 'admin') {
-            const [totalUsersRows] = await db.query('SELECT COUNT(*) as count FROM users WHERE role = "user"');
+            const [totalUsersRows] = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'user'");
             const [totalTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks');
-            const [completedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "completed"');
-            const [pendingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "pending"');
-            const [ongoingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE status = "ongoing"');
+            const [completedTasksRows] = await db.query("SELECT COUNT(*) as count FROM tasks WHERE status = 'completed'");
+            const [pendingTasksRows] = await db.query("SELECT COUNT(*) as count FROM tasks WHERE status = 'pending'");
+            const [ongoingTasksRows] = await db.query("SELECT COUNT(*) as count FROM tasks WHERE status = 'ongoing'");
 
             const stats = {
                 totalUsers: totalUsersRows[0].count,
@@ -177,9 +177,9 @@ router.get('/stats/summary', isAuthenticated, async (req, res) => {
             res.json({ success: true, stats });
         } else {
             const [assignedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ?', [user.id]);
-            const [completedTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "completed"', [user.id]);
-            const [pendingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "pending"', [user.id]);
-            const [ongoingTasksRows] = await db.query('SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = "ongoing"', [user.id]);
+            const [completedTasksRows] = await db.query("SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = 'completed'", [user.id]);
+            const [pendingTasksRows] = await db.query("SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = 'pending'", [user.id]);
+            const [ongoingTasksRows] = await db.query("SELECT COUNT(*) as count FROM tasks WHERE assigned_user_id = ? AND status = 'ongoing'", [user.id]);
 
             const stats = {
                 assignedTasks: assignedTasksRows[0].count,
