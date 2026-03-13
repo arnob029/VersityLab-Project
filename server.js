@@ -36,6 +36,16 @@ app.use(session({
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+// System Status
+app.get('/api/system-status', (req, res) => {
+    res.json({
+        success: true,
+        version: VERSION,
+        database: process.env.DB_NAME,
+        environment: process.env.NODE_ENV || 'production'
+    });
+});
+
 // API Routes
 app.use('/api', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
