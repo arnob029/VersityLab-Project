@@ -18,13 +18,20 @@ async function checkAuth() {
             currentUser = data.user;
             updateSidebarNav(data.user);
             
-            // Fill sidebar
-            document.getElementById('sidebarName').textContent = data.user.name;
-            document.getElementById('sidebarAvatar').textContent = data.user.name.charAt(0).toUpperCase();
-            document.getElementById('sidebarRole').innerHTML = data.user.role === 'admin' 
-                ? '<span class="badge-role badge-admin">Admin</span>' 
-                : '<span class="badge-role badge-user">User</span>';
-            document.getElementById('roleSubtitle').textContent = data.user.role === 'admin' ? 'Admin Panel' : 'User Panel';
+            // Fill sidebar safely
+            const nameEl = document.getElementById('sidebarName');
+            const avatarEl = document.getElementById('sidebarAvatar');
+            const roleEl = document.getElementById('sidebarRole');
+            const subtitleEl = document.getElementById('roleSubtitle');
+
+            if (nameEl) nameEl.textContent = data.user.name;
+            if (avatarEl) avatarEl.textContent = data.user.name.charAt(0).toUpperCase();
+            if (roleEl) {
+                roleEl.innerHTML = data.user.role === 'admin' 
+                    ? '<span class="badge-role badge-admin">Admin</span>' 
+                    : '<span class="badge-role badge-user">User</span>';
+            }
+            if (subtitleEl) subtitleEl.textContent = data.user.role === 'admin' ? 'Admin Panel' : 'User Panel';
 
             // Fill profile data once we have user
             loadProfileData();

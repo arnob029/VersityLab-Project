@@ -38,10 +38,15 @@ async function init() {
             return;
         }
         const user = data.user;
-        document.getElementById('sidebarName').textContent = user.name;
-        document.getElementById('sidebarAvatar').textContent = user.name.charAt(0).toUpperCase();
-        document.getElementById('welcomeText').textContent = `Welcome, ${user.name}!`;
+        const nameEl = document.getElementById('sidebarName');
+        const avatarEl = document.getElementById('sidebarAvatar');
+        const welcomeEl = document.getElementById('welcomeText');
+        
+        if (nameEl) nameEl.textContent = user.name;
+        if (avatarEl) avatarEl.textContent = user.name.charAt(0).toUpperCase();
+        if (welcomeEl) welcomeEl.textContent = `Welcome, ${user.name}!`;
     } catch (e) {
+        console.error('Init error:', e);
         window.location.href = 'index.html';
         return;
     }

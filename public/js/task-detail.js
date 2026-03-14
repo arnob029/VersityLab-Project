@@ -15,28 +15,36 @@ function goBack() { window.history.back(); }
 
 function buildSidebar(role) {
     const nav = document.getElementById('sidebarNav');
-    document.getElementById('sidebarSubtitle').textContent = role === 'admin' ? 'Admin Panel' : 'My Workspace';
+    const subtitleEl = document.getElementById('sidebarSubtitle');
+    const roleBadgeEl = document.getElementById('sidebarRoleBadge');
+
+    if (subtitleEl) subtitleEl.textContent = role === 'admin' ? 'Admin Panel' : 'My Workspace';
+
     if (role === 'admin') {
-        nav.innerHTML = `
-            <div class="nav-section-label">Overview</div>
-            <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
-            <div class="nav-section-label">Management</div>
-            <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
-            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> Task Management</a>
-            <div class="nav-section-label">Settings</div>
-            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
-        `;
-        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-admin">Admin</span>';
+        if (nav) {
+            nav.innerHTML = `
+                <div class="nav-section-label">Overview</div>
+                <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+                <div class="nav-section-label">Management</div>
+                <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
+                <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> Task Management</a>
+                <div class="nav-section-label">Settings</div>
+                <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+            `;
+        }
+        if (roleBadgeEl) roleBadgeEl.innerHTML = '<span class="badge-role badge-admin">Admin</span>';
     } else {
-        nav.innerHTML = `
-            <div class="nav-section-label">Overview</div>
-            <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
-            <div class="nav-section-label">Work</div>
-            <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> My Tasks</a>
-            <div class="nav-section-label">Settings</div>
-            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
-        `;
-        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-user">User</span>';
+        if (nav) {
+            nav.innerHTML = `
+                <div class="nav-section-label">Overview</div>
+                <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+                <div class="nav-section-label">Work</div>
+                <a href="tasks.html" class="nav-item"><span class="nav-icon">✅</span> My Tasks</a>
+                <div class="nav-section-label">Settings</div>
+                <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+            `;
+        }
+        if (roleBadgeEl) roleBadgeEl.innerHTML = '<span class="badge-role badge-user">User</span>';
     }
 }
 
@@ -353,12 +361,20 @@ async function init() {
         const res = await fetch('/api/me', { credentials: 'include' });
         const data = await res.json();
         if (!data.success) { window.location.href = 'index.html'; return; }
+        
         currentUser = data.user;
-        document.getElementById('sidebarName').textContent = currentUser.name;
-        document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+        
+        // Safely set sidebar info
+        const nameEl = document.getElementById('sidebarName');
+        const avatarEl = document.getElementById('sidebarAvatar');
+        if (nameEl) nameEl.textContent = currentUser.name;
+        if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0).toUpperCase();
+        
         buildSidebar(currentUser.role);
     } catch (e) {
-        window.location.href = 'index.html'; return;
+        console.error('Init error:', e);
+        window.location.href = 'index.html'; 
+        return;
     }
 
     // Load task details

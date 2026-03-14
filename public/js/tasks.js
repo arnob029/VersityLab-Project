@@ -36,37 +36,45 @@ function formatDate(d) {
 
 function buildSidebar(role) {
     const nav = document.getElementById('sidebarNav');
-    document.getElementById('sidebarSubtitle').textContent = role === 'admin' ? 'Admin Panel' : 'My Workspace';
+    const subtitleEl = document.getElementById('sidebarSubtitle');
+    const roleBadgeEl = document.getElementById('sidebarRoleBadge');
+    const addTaskBtnEl = document.getElementById('addTaskBtn');
+    const pageTitleEl = document.getElementById('pageTitle');
+
+    if (subtitleEl) subtitleEl.textContent = role === 'admin' ? 'Admin Panel' : 'My Workspace';
 
     if (role === 'admin') {
-        nav.innerHTML = `
-            <div class="nav-section-label">Overview</div>
-            <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
-            <div class="nav-section-label">Management</div>
-            <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
-            <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> Task Management</a>
-            <div class="nav-section-label">Settings</div>
-            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
-        `;
-        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-admin">Admin</span>';
-        document.getElementById('addTaskBtn').style.display = 'flex';
-        document.getElementById('pageTitle').textContent = 'Task Management';
+        if (nav) {
+            nav.innerHTML = `
+                <div class="nav-section-label">Overview</div>
+                <a href="admin-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+                <div class="nav-section-label">Management</div>
+                <a href="users.html" class="nav-item"><span class="nav-icon">👥</span> User Management</a>
+                <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> Task Management</a>
+                <div class="nav-section-label">Settings</div>
+                <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+            `;
+        }
+        if (roleBadgeEl) roleBadgeEl.innerHTML = '<span class="badge-role badge-admin">Admin</span>';
+        if (addTaskBtnEl) addTaskBtnEl.style.display = 'flex';
+        if (pageTitleEl) pageTitleEl.textContent = 'Task Management';
         
-        // Hide status selection for admins (as users update status)
         const statusGroup = document.getElementById('taskStatusGroup');
         if (statusGroup) statusGroup.style.display = 'none';
     } else {
-        nav.innerHTML = `
-            <div class="nav-section-label">Overview</div>
-            <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
-            <div class="nav-section-label">Work</div>
-            <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> My Tasks</a>
-            <div class="nav-section-label">Settings</div>
-            <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
-        `;
-        document.getElementById('sidebarRoleBadge').innerHTML = '<span class="badge-role badge-user">User</span>';
-        document.getElementById('addTaskBtn').style.display = 'none';
-        document.getElementById('pageTitle').textContent = 'My Tasks';
+        if (nav) {
+            nav.innerHTML = `
+                <div class="nav-section-label">Overview</div>
+                <a href="user-dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+                <div class="nav-section-label">Work</div>
+                <a href="tasks.html" class="nav-item active"><span class="nav-icon">✅</span> My Tasks</a>
+                <div class="nav-section-label">Settings</div>
+                <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+            `;
+        }
+        if (roleBadgeEl) roleBadgeEl.innerHTML = '<span class="badge-role badge-user">User</span>';
+        if (addTaskBtnEl) addTaskBtnEl.style.display = 'none';
+        if (pageTitleEl) pageTitleEl.textContent = 'My Tasks';
     }
 }
 
@@ -75,12 +83,20 @@ async function init() {
         const res = await fetch('/api/me', { credentials: 'include' });
         const data = await res.json();
         if (!data.success) { window.location.href = 'index.html'; return; }
+        
         currentUser = data.user;
-        document.getElementById('sidebarName').textContent = currentUser.name;
-        document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+        
+        // Safely set sidebar info
+        const nameEl = document.getElementById('sidebarName');
+        const avatarEl = document.getElementById('sidebarAvatar');
+        if (nameEl) nameEl.textContent = currentUser.name;
+        if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0).toUpperCase();
+        
         buildSidebar(currentUser.role);
     } catch (e) {
-        window.location.href = 'index.html'; return;
+        console.error('Init error:', e);
+        window.location.href = 'index.html'; 
+        return;
     }
 
     if (currentUser.role === 'admin') {
