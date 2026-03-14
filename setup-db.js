@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mysql = require('mysql2');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 async function setup() {
     // First connect without a database to create it

@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 async function setArnobAsAdmin() {
     console.log('🚀 Setting up Arnob as Admin...');

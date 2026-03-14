@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const db = require('../config/db');
 
 // POST /api/register
@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Email already registered.' });
         }
 
-        // Hash password
+        // Hash password (using native bcrypt for speed)
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save user
