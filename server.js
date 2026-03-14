@@ -84,7 +84,8 @@ app.get('/task-detail', (req, res) => {
 // Start server
 app.listen(PORT, () => {
     console.log(`\n✅ Task Management System running at http://localhost:${PORT}`);
-    console.log(`📋 Default Admin Login:`);
-    console.log(`   Email:    admin@taskmanager.com`);
-    console.log(`   Password: password\n`);
+    console.log(`📋 Admin Login:`);
+    console.log(`   Email:    arnob0653@gmail.com`);
+    console.log(`   Password: @Ar87?&Pu\n`);
 });
+

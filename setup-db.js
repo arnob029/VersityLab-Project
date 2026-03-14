@@ -14,12 +14,13 @@ async function setup() {
     }).promise();
 
     try {
-        console.log('🔧 Setting up Task Management System database...\n');
+        console.log('🔧 Setting up TiDB Cloud database...\n');
+        
+        const dbName = process.env.DB_NAME || 'test';
+        await conn.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
+        console.log(`✅ Database checked/created: ${dbName}`);
 
-        await conn.query('CREATE DATABASE IF NOT EXISTS task_management');
-        console.log('✅ Database created: task_management');
-
-        await conn.query('USE task_management');
+        await conn.query(`USE ${dbName}`);
 
         // Create users table
         await conn.query(`
@@ -40,7 +41,7 @@ async function setup() {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(200) NOT NULL,
                 description TEXT,
-                status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+                status ENUM('pending', 'in_progress', 'completed', 'ongoing') DEFAULT 'pending',
                 assigned_user_id INT,
                 deadline DATE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -63,6 +64,21 @@ async function setup() {
         `);
         console.log('✅ Table created: comments');
 
+        // Create reactions table (missing from previous setup)
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS comment_reactions (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                comment_id INT NOT NULL,
+                user_id INT NOT NULL,
+                emoji VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_reaction (comment_id, user_id, emoji),
+                FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `);
+        console.log('✅ Table created: comment_reactions');
+
         // Seed admin user
         const [existing] = await conn.query("SELECT id FROM users WHERE email = 'admin@taskmanager.com'");
         if (existing.length === 0) {
@@ -76,25 +92,12 @@ async function setup() {
             console.log('ℹ️  Admin user already exists');
         }
 
-        // Seed sample user
-        const [existingUser] = await conn.query("SELECT id FROM users WHERE email = 'rahim@example.com'");
-        if (existingUser.length === 0) {
-            const hash = await bcrypt.hash('password123', 10);
-            await conn.query(
-                "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
-                ['Rahim Ahmed', 'rahim@example.com', hash, 'user']
-            );
-            console.log('✅ Sample user created: rahim@example.com (password: password123)');
-        }
-
-        console.log('\n🎉 Database setup complete!');
-        console.log('\n📋 Login Credentials:');
-        console.log('   Admin  → admin@taskmanager.com / password');
-        console.log('   User   → rahim@example.com / password123\n');
+        console.log('\n🎉 Database setup complete on TiDB Cloud!');
     } catch (error) {
         console.error('❌ Setup error:', error);
         process.exit(1);
     }
+
 
     await conn.end();
 }

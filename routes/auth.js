@@ -81,9 +81,13 @@ router.post('/login', async (req, res) => {
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ success: false, message: 'Server error.' });
+        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+            return res.status(503).json({ success: false, message: 'Database is currently offline. Please check your cloud service.' });
+        }
+        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
     }
 });
+
 
 // POST /api/logout
 router.post('/logout', (req, res) => {
