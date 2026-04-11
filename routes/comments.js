@@ -56,7 +56,7 @@ router.get('/:task_id', isAuthenticated, async (req, res) => {
             (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction = '👍') as like_count,
             (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction = '❤️') as heart_count,
             (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction = '😆') as laugh_count,
-            (SELECT reaction FROM comment_reactions WHERE comment_id = c.id AND user_id = ?) as my_reaction
+            (SELECT reaction FROM comment_reactions WHERE comment_id = c.id AND user_id = ? LIMIT 1) as my_reaction
             FROM comments c 
             JOIN users u ON c.user_id = u.id 
             WHERE c.task_id = ? 
@@ -91,8 +91,8 @@ router.post('/:id/react', isAuthenticated, async (req, res) => {
             return res.json({ success: true, message: 'Reaction removed.', action: 'removed' });
         } else {
             // Toggle on: Add reaction
-            // Optional: Remove other reactions by this user on this comment first if you want only one reaction per user
-            // await db.query('DELETE FROM comment_reactions WHERE comment_id = ? AND user_id = ?', [id, user.id]);
+            // Only one reaction per user per comment
+            await db.query('DELETE FROM comment_reactions WHERE comment_id = ? AND user_id = ?', [id, user.id]);
             
             await db.query(
                 'INSERT INTO comment_reactions (comment_id, user_id, reaction) VALUES (?, ?, ?)',
