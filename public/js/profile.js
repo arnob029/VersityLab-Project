@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('profileForm').addEventListener('submit', handleProfileUpdate);
     document.getElementById('passwordForm').addEventListener('submit', handlePasswordUpdate);
+
+    // Password strength meter for the Change Password section
+    if (typeof initPasswordStrength === 'function') {
+        initPasswordStrength('newPassword', 'profile-pwd-strength', 'profile-pwd-sym-popup');
+    }
 });
 
 async function checkAuth() {

@@ -913,3 +913,143 @@ tbody td {
     padding: 12px 0;
     border-bottom: 1px solid rgba(51,65,85,0.3);
 }
+
+/* ============================================
+   Password Strength Meter & Symbol Popup
+   ============================================ */
+
+/* Wrapper injected below the password input */
+.pwd-strength-wrapper {
+    margin-top: 8px;
+}
+
+/* Track bar */
+.pwd-strength-bar-track {
+    height: 5px;
+    background: var(--card-border);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+/* Fill bar – width & colour set via JS */
+.pwd-strength-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+}
+
+/* Meta row: label on left, recommendation on right */
+.pwd-strength-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pwd-strength-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.pwd-strength-rec {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    text-align: right;
+    flex: 1;
+    line-height: 1.4;
+}
+
+/* ---- Symbol Suggestion Popup ---- */
+.pwd-symbol-popup {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px 10px;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(139,92,246,0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+    pointer-events: none;
+}
+
+.pwd-symbol-popup.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Arrow pointing downward toward the input */
+.pwd-symbol-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: 20px;
+    width: 12px;
+    height: 12px;
+    background: var(--card-bg);
+    border-right: 1px solid var(--primary);
+    border-bottom: 1px solid var(--primary);
+    transform: rotate(45deg);
+}
+
+.pwd-symbol-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.pwd-symbol-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 7px;
+}
+
+.pwd-symbol-chip {
+    background: var(--hover-bg);
+    border: 1px solid var(--card-border);
+    color: var(--primary-light);
+    font-size: 14px;
+    font-weight: 700;
+    font-family: monospace;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    line-height: 1;
+}
+
+.pwd-symbol-chip:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+/* Chip turns green + slightly bold when the symbol is already in the password */
+.pwd-symbol-chip.used {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+    color: #34d399;
+}
+
+.pwd-symbol-hint {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    font-style: italic;
+}
