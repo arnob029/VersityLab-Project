@@ -54,7 +54,7 @@
             <div style="display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
                 <button class="btn btn-primary btn-sm filter-btn" onclick="filterByStatus('all')" id="filter-all">All</button>
                 <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('pending')" id="filter-pending">⏳ Pending</button>
-                <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('in_progress')" id="filter-in_progress">🔄 In Progress</button>
+                <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('ongoing')" id="filter-ongoing">🔄 In Progress</button>
                 <button class="btn btn-secondary btn-sm filter-btn" onclick="filterByStatus('completed')" id="filter-completed">✅ Completed</button>
             </div>
 
@@ -112,7 +112,7 @@
                 <label class="form-label">Status</label>
                 <select id="taskStatus" class="form-select">
                     <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
+                    <option value="ongoing">In Progress</option>
                     <option value="completed">Completed</option>
                 </select>
             </div>
