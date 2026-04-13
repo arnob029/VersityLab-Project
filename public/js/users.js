@@ -68,9 +68,11 @@ async function loadUsers() {
     try {
         const res = await fetch('/api/users', { credentials: 'include' });
         const data = await res.json();
-        allUsers = data.users || [];
+        if (!data.success) throw new Error(data.message || 'Failed');
+        allUsers = (data.users || []).map(u => ({ ...u, id: parseInt(u.id, 10) }));
         renderUsers(allUsers);
     } catch (e) {
+        console.error('loadUsers error:', e);
         document.getElementById('usersTableBody').innerHTML =
             `<tr><td colspan="6" style="text-align:center; color:var(--danger); padding:20px;">Failed to load users.</td></tr>`;
     }
@@ -82,26 +84,35 @@ function renderUsers(users) {
         tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👥</div><h4>No users found</h4></div></td></tr>`;
         return;
     }
-    tbody.innerHTML = users.map((u, i) => `
+    tbody.innerHTML = users.map((u, i) => {
+        const name   = u.name  || '?';
+        const email  = u.email || '';
+        const role   = u.role  || 'user';
+        const joined = u.created_at
+            ? new Date(u.created_at).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'})
+            : '-';
+        const id = parseInt(u.id, 10);
+        const safeName = name.replace(/'/g, "\\'");
+        return `
         <tr>
             <td>${i + 1}</td>
             <td>
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <div class="user-avatar" style="width:32px;height:32px;font-size:13px;">${u.name.charAt(0).toUpperCase()}</div>
-                    <strong>${u.name}</strong>
+                    <div class="user-avatar" style="width:32px;height:32px;font-size:13px;">${name.charAt(0).toUpperCase()}</div>
+                    <strong>${name}</strong>
                 </div>
             </td>
-            <td style="color:var(--text-secondary);">${u.email}</td>
-            <td><span class="badge-role ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">${u.role}</span></td>
-            <td style="color:var(--text-muted); font-size:13px;">${new Date(u.created_at).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'})}</td>
+            <td style="color:var(--text-secondary);">${email}</td>
+            <td><span class="badge-role ${role === 'admin' ? 'badge-admin' : 'badge-user'}">${role}</span></td>
+            <td style="color:var(--text-muted); font-size:13px;">${joined}</td>
             <td>
                 <div class="action-group">
-                    <button class="btn btn-warning btn-sm btn-icon" onclick="openEditModal(${u.id})" title="Edit">✏️</button>
-                    <button class="btn btn-danger btn-sm btn-icon" onclick="openDeleteModal(${u.id}, '${u.name}')" title="Delete">🗑️</button>
+                    <button class="btn btn-warning btn-sm btn-icon" onclick="openEditModal(${id})" title="Edit">✏️</button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="openDeleteModal(${id}, '${safeName}')" title="Delete">🗑️</button>
                 </div>
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
 
 function filterUsers() {
@@ -124,8 +135,12 @@ function openAddModal() {
 }
 
 function openEditModal(userId) {
+    userId = parseInt(userId, 10);
     const user = allUsers.find(u => u.id === userId);
-    if (!user) return;
+    if (!user) {
+        console.error('openEditModal: user not found for id', userId, 'allUsers:', allUsers);
+        return;
+    }
     editingUserId = userId;
     document.getElementById('modalTitle').textContent = 'Edit User';
     document.getElementById('pwdNote').style.display = 'inline';

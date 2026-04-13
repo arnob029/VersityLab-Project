@@ -204,16 +204,28 @@ async function handlePasswordUpdate(e) {
             alert.className = 'alert alert-success show';
             alert.innerHTML = '✅ Password updated successfully!';
             document.getElementById('passwordForm').reset();
+
+            // Manually reset strength bar since it's outside the form
+            const fill  = document.getElementById('profile-pwd-strength-fill');
+            const lbl   = document.getElementById('profile-pwd-strength-label');
+            const rec   = document.getElementById('profile-pwd-strength-rec');
+            if (fill)  { fill.style.width = '0%'; fill.style.background = ''; }
+            if (lbl)   { lbl.textContent = ''; }
+            if (rec)   { rec.textContent = ''; }
+
+            // Hide success alert after 3s
+            setTimeout(() => alert.classList.remove('show'), 3000);
         } else {
             alert.className = 'alert alert-danger show';
             alert.innerHTML = `❌ ${data.message}`;
+            setTimeout(() => alert.classList.remove('show'), 4000);
         }
     } catch (err) {
         alert.className = 'alert alert-danger show';
         alert.innerHTML = '❌ Server error.';
+        setTimeout(() => alert.classList.remove('show'), 4000);
     }
 
     btn.disabled = false;
     btn.textContent = 'Update Password';
-    setTimeout(() => alert.classList.remove('show'), 3000);
 }
