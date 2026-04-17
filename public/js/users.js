@@ -65,16 +65,31 @@ function buildSidebar() {
 }
 
 async function loadUsers() {
+    const tbody = document.getElementById('usersTableBody');
     try {
         const res = await fetch('/api/users', { credentials: 'include' });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        
         const data = await res.json();
-        if (!data.success) throw new Error(data.message || 'Failed');
-        allUsers = (data.users || []).map(u => ({ ...u, id: parseInt(u.id, 10) }));
+        if (!data.success) throw new Error(data.message || 'Failed to fetch users');
+        
+        // Ensure data.users is an array before mapping
+        const usersArray = Array.isArray(data.users) ? data.users : [];
+        allUsers = usersArray.map(u => ({ 
+            ...u, 
+            id: parseInt(u.id, 10) 
+        }));
+        
         renderUsers(allUsers);
     } catch (e) {
         console.error('loadUsers error:', e);
-        document.getElementById('usersTableBody').innerHTML =
-            `<tr><td colspan="6" style="text-align:center; color:var(--danger); padding:20px;">Failed to load users.</td></tr>`;
+        if (tbody) {
+            tbody.innerHTML =
+                `<tr><td colspan="6" style="text-align:center; color:var(--danger); padding:20px;">
+                    <div style="margin-bottom:10px;">❌ Failed to load users: ${e.message}</div>
+                    <button class="btn btn-sm btn-secondary" onclick="loadUsers()">Retry</button>
+                </td></tr>`;
+        }
     }
 }
 
@@ -124,11 +139,19 @@ function filterUsers() {
 function openAddModal() {
     editingUserId = null;
     document.getElementById('modalTitle').textContent = 'Add New User';
+    
+    // UI states for Add
+    document.getElementById('passwordGroup').style.display = 'block';
     document.getElementById('pwdNote').style.display = 'none';
+    document.getElementById('userName').readOnly = false;
+    document.getElementById('userEmail').readOnly = false;
+    
+    // Clear values
     document.getElementById('userName').value = '';
     document.getElementById('userEmail').value = '';
     document.getElementById('userPassword').value = '';
     document.getElementById('userRole').value = 'user';
+    
     const a = document.getElementById('modalAlert');
     a.className = 'alert';
     document.getElementById('userModal').classList.add('active');
@@ -138,16 +161,26 @@ function openEditModal(userId) {
     userId = parseInt(userId, 10);
     const user = allUsers.find(u => u.id === userId);
     if (!user) {
-        console.error('openEditModal: user not found for id', userId, 'allUsers:', allUsers);
+        console.error('openEditModal: user not found for id', userId, 'current allUsers:', allUsers);
+        // If not found, try reloading users
+        loadUsers();
         return;
     }
+    
     editingUserId = userId;
     document.getElementById('modalTitle').textContent = 'Edit User';
-    document.getElementById('pwdNote').style.display = 'inline';
+    
+    // UI states for Edit: Hide password, make name/email read-only
+    document.getElementById('passwordGroup').style.display = 'none';
+    document.getElementById('userName').readOnly = true;
+    document.getElementById('userEmail').readOnly = true;
+    
+    // Set values
     document.getElementById('userName').value = user.name;
     document.getElementById('userEmail').value = user.email;
-    document.getElementById('userPassword').value = '';
+    document.getElementById('userPassword').value = ''; // Should be hidden anyway
     document.getElementById('userRole').value = user.role;
+    
     const a = document.getElementById('modalAlert');
     a.className = 'alert';
     document.getElementById('userModal').classList.add('active');
