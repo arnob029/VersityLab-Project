@@ -122,8 +122,8 @@ function renderUsers(users) {
             <td style="color:var(--text-muted); font-size:13px;">${joined}</td>
             <td>
                 <div class="action-group">
-                    <button class="btn btn-warning btn-sm btn-icon" onclick="openEditModal(${id})" title="Edit">✏️</button>
-                    <button class="btn btn-danger btn-sm btn-icon" onclick="openDeleteModal(${id}, '${safeName}')" title="Delete">🗑️</button>
+                    <button class="btn btn-warning btn-sm btn-icon" onclick="event.stopPropagation(); openEditModal(${id})" title="Edit">✏️</button>
+                    <button class="btn btn-danger btn-sm btn-icon" onclick="event.stopPropagation(); openDeleteModal(${id}, '${safeName}')" title="Delete">🗑️</button>
                 </div>
             </td>
         </tr>`;
@@ -131,8 +131,23 @@ function renderUsers(users) {
 }
 
 function filterUsers() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = allUsers.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+    
+    const q = searchInput.value.toLowerCase().trim();
+    
+    // If search is empty, show everyone
+    if (!q) {
+        renderUsers(allUsers);
+        return;
+    }
+    
+    const filtered = allUsers.filter(u => {
+        const name = (u.name || '').toLowerCase();
+        const email = (u.email || '').toLowerCase();
+        return name.includes(q) || email.includes(q);
+    });
+    
     renderUsers(filtered);
 }
 
