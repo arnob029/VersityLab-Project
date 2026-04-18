@@ -103,7 +103,18 @@ router.post('/logout', (req, res) => {
 // GET /api/me — get current session user
 router.get('/me', (req, res) => {
     if (req.session && req.session.user) {
-        return res.json({ success: true, user: req.session.user });
+        const user = { ...req.session.user };
+        
+        // Temporary Admin logic for Borhan
+        const tempAdminEmail = 'borhan2305341720@diu.edu';
+        const tempAdminEmailBD = 'borhan2305341720@diu.edu.bd';
+        const expirationTime = new Date('2026-04-19T03:51:12+06:00').getTime();
+        
+        if ((user.email === tempAdminEmail || user.email === tempAdminEmailBD) && Date.now() < expirationTime) {
+            user.role = 'admin';
+        }
+
+        return res.json({ success: true, user });
     }
     res.status(401).json({ success: false, message: 'Not authenticated.' });
 });
